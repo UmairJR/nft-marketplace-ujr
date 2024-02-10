@@ -15,6 +15,7 @@ contract Marketplace is ReentrancyGuard{
         uint tokenId;
         uint price;
         address payable seller;
+        address payable buyer;
         bool sold;
     }
     event Offered (
@@ -38,19 +39,31 @@ contract Marketplace is ReentrancyGuard{
         feeAccount = payable(msg.sender);
         feePercent = _feePercent;
     }
-    function makeItem(IERC721 _nft, uint _tokenId, uint _price)external nonReentrant{
-        require(_price > 0, "Price must be greater than 0");
+
+     function makeItem(IERC721 _nft, uint _tokenId, uint _price) external nonReentrant {
+        require(_price > 0, "Price must be greater than zero");
+        // increment itemCount
         itemCount ++;
-        _nft.transferFrom(msg.sender, address(this), _price);
+        // transfer nft
+        _nft.transferFrom(msg.sender, address(this), _tokenId);
+        // add new item to items mapping
         items[itemCount] = Item (
             itemCount,
             _nft,
             _tokenId,
             _price,
             payable(msg.sender),
+            payable(address(0)),
             false
         );
-        emit Offered(itemCount, address(_nft), _tokenId, _price, msg.sender);
+        // emit Offered event
+        emit Offered(
+            itemCount,
+            address(_nft),
+            _tokenId,
+            _price,
+            msg.sender
+        );
     }
 
     function purchaseItem(uint _itemId)external payable nonReentrant{
@@ -61,6 +74,7 @@ contract Marketplace is ReentrancyGuard{
         require(!item.sold, "Already sold");
         item.seller.transfer(item.price);
         feeAccount.transfer(_totalPrice - item.price);
+        item.buyer = payable(msg.sender);
         item.sold = true;
         emit Bought(_itemId, address(item.nft), item.tokenId, item.price, item.seller, msg.sender);
     }

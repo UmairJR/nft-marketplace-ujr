@@ -22,11 +22,11 @@ export const Web3Provider = ({ children }) => {
         console.log('Current account:', accounts[0]);
         const nftContract = new web3Instance.eth.Contract(
           NFT.abi,
-          "0xbBe838256d98f691B83A9e59f72c8c17e83bE0c5"
+          "0x803120eD1B5f47E207DfbD16B7e15b1445eCCA3C"
         );
         const mpContract = new web3Instance.eth.Contract(
           Marketplace.abi,
-          "0xCB87CdD7e13203A59437fE7Ba55dA78161DA1879"
+          "0xB50892642b54944CC2a52d80b289B564a9B43b26"
         );
         setWeb3(web3Instance);
         setAccounts(accounts);

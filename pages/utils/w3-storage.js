@@ -20,13 +20,13 @@ export const authorizeAgent = async (email) => {
     }
   };
 
-export const uploadFileToW3 = async (file, spaceDid = 'did:key:z6MkmUPHGfBATCh86dGVnL17orXiAiDbF4w1zaYetzHwMPD6') => {
+export const uploadFileToW3 = async (file, spaceDid = 'did:key:z6MkoGiYiNn3j6jUpB9AV2rnhDbmFJgC8J22ERyXm1iqwPkG') => {
   if (!w3upClient) {
     throw new Error('w3up client not initialized. Call initializeW3UpClient first.');
   }
 
   try {
-    await authorizeAgent('umairjr1265@gmail.com');
+    // await authorizeAgent('umairjr1265@gmail.com');
     await w3upClient.setCurrentSpace(spaceDid);
     const cid = await w3upClient.uploadFile(file);
     console.log('File uploaded successfully. CID:', cid);
