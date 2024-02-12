@@ -10,6 +10,7 @@ import Home from './Home';
 import ListedItems from './ListedItems';
 import PurchasedItems from './PurchasedItems';
 import { useRouter } from 'next/router';
+import SoldItems from './SoldItems';
 
 const Dashboard = () => {
   const router = useRouter();
@@ -63,14 +64,15 @@ const Dashboard = () => {
       <div>
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-            <Spinner animation="border" style={{ display: 'flex' }} />
-            <p className='mx-3 my-0'>Awaiting Metamask Connection...</p>
+            <span className="loading loading-infinity loading-md"></span>
+            <p className='mx-3 my-0 font-bold text-lg text-primary'>Awaiting Metamask Connection...</p>
           </div>
         ) : (
           <>
             {router.pathname === '/' && <Home mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts}/>}
             {router.pathname === '/create' && <Create mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts} />}
             {router.pathname === '/my-listed-items' && <ListedItems mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts}/>}
+            {router.pathname === '/my-sold-items' && <SoldItems mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts}/>}
             {router.pathname === '/my-purchases' && <PurchasedItems mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts}/>}
           </>
         )}

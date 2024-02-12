@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-import { Row, Col, Card } from 'react-bootstrap'
+import ListCardUI from './ui/ListCard';
 
 const PurchasedItems = ({ mpContract, nftContract, web3, accounts }) => {
   const [loading, setLoading] = useState(true);
@@ -49,38 +49,30 @@ const PurchasedItems = ({ mpContract, nftContract, web3, accounts }) => {
   useEffect(() => {
     loadPurchasedItems()
   }, [])
+
   if (loading) return (
-    <main style={{ padding: "1rem 0" }}>
-      <h2>Loading...</h2>
+    <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+      <span className="loading loading-ring loading-md"></span>
+      <p className='mx-3 my-0 font-bold text-lg text-primary'>Loading...</p>
     </main>
   )
 
   return (
-    <div className="flex justify-center">
-      {purchasedItems.length > 0 ?
-        <div className="px-5 py-3 container">
-            <h2>Purchased</h2>
-          <Row xs={1} md={2} lg={4} className="g-4 py-3">
-            {purchasedItems.map((item, idx) => (
-              <Col key={idx} className="overflow-hidden">
-                <Card>
-                  <Card.Img variant="top" src={item.image} />
-                  <Card.Footer>{item.totalPriceEther} ETH
-                  <br />
-                Seller Address: {item.sellerAddress}
-                <br />
-                Buyer Address: {item.buyerAddress}
-                  </Card.Footer>
-                </Card>
-              </Col>
-            ))}
-          </Row>
+    <div className="mt-5 mb-10">
+      <h1 className="text-3xl font-bold font-serif mb-5 text-center">Purchased NFTs</h1>
+        <div className="px-5 grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 justify-center">
+          {purchasedItems.length > 0 ? (
+            purchasedItems.map((item, idx) => (
+              <div key={idx}>
+                <ListCardUI item={item} isPurchased={true} />
+              </div>
+            ))
+          ) : (
+            <main style={{ padding: "1rem 0" }}>
+            <h1 className="text-3xl font-bold font-serif mb-4 text-center">No Purchased NFTs</h1>
+            </main>
+          )}
         </div>
-        : (
-          <main style={{ padding: "1rem 0" }}>
-            <h2>No Purchases</h2>
-          </main>
-        )}
     </div>
 
   )
