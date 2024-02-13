@@ -13,6 +13,7 @@ const NavbarUI = ({ web3Handler, accounts }) => {
                         <li><Link href="/" >Home </Link></li>
                         <li><Link href="/create" >Create</Link></li>
                         <li><Link href="/my-listed-items" >My Listed Items</Link></li>
+                        <li><Link href="/my-sold-items" >Items Sold</Link></li>
                         <li><Link href="/my-purchases" >My Purchases</Link></li>
                     </ul>
                 </div>

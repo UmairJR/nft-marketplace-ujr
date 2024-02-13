@@ -19,6 +19,8 @@ const Dashboard = () => {
   const [accounts, setAccounts] = useState(null);
   const [nftContract, setNftContract] = useState(null);
   const [mpContract, setMpContract] = useState(null);
+  const [nft_contract_address, setNft_contract_address] = useState('');
+  const [mp_contract_address, setMp_contract_address] = useState('');
   
 
   const web3Handler = async () => {
@@ -31,18 +33,25 @@ const Dashboard = () => {
           method: "eth_requestAccounts",
       });
         console.log('Current account:', accounts[0]);
+        const netId = await web3Instance.eth.net.getId();
+        console.log(netId);
+        const nft_contract_address = NFT.networks[netId].address.toString();
+        const mp_contract_address = Marketplace.networks[netId].address.toString();
+        console.log('Deployed addresses:', nft_contract_address, mp_contract_address);
         const nftContract = new web3Instance.eth.Contract(
           NFT.abi,
-          "0x857B76c752671d549604682bFBc08691A2517279"
+          nft_contract_address
         );
         const mpContract = new web3Instance.eth.Contract(
           Marketplace.abi,
-          "0xF00B9f871b0306Ca5de7Fb5f2c6abcA9bb8AD3a2"
+          mp_contract_address
         );
         setWeb3(web3Instance);
         setAccounts(accounts);
         setNftContract(nftContract);
         setMpContract(mpContract);
+        setNft_contract_address(nft_contract_address);
+        setMp_contract_address(mp_contract_address);
       } else {
         console.error('MetaMask not detected');
         const provider = new Web3.providers.HttpProvider('http://127.0.0.1:7545');
@@ -70,7 +79,7 @@ const Dashboard = () => {
         ) : (
           <>
             {router.pathname === '/' && <Home mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts}/>}
-            {router.pathname === '/create' && <Create mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts} />}
+            {router.pathname === '/create' && <Create mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts} nft_contract_address={nft_contract_address} mp_contract_address={mp_contract_address} />}
             {router.pathname === '/my-listed-items' && <ListedItems mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts}/>}
             {router.pathname === '/my-sold-items' && <SoldItems mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts}/>}
             {router.pathname === '/my-purchases' && <PurchasedItems mpContract={mpContract} nftContract={nftContract} web3={web3} accounts={accounts}/>}

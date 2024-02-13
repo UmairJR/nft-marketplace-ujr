@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import ListCardUI from './ui/ListCard';
+import { useRouter } from 'next/router';
+import { useToast } from '@chakra-ui/react'
 
 const PurchasedItems = ({ mpContract, nftContract, web3, accounts }) => {
   const [loading, setLoading] = useState(true);
   const [purchasedItems, setPurchasedItems] = useState([]);
+  const router = useRouter();
+  const toast = useToast();
+
 
   const loadPurchasedItems = async () => {
     try {
@@ -21,8 +26,8 @@ const PurchasedItems = ({ mpContract, nftContract, web3, accounts }) => {
           const response = await axios.get(uri);
           const metadata = response.data;
           const totalPrice = await mpContract.methods.getTotalPrice(item.itemId).call()
-          const totalPriceEther = web3.utils.fromWei(totalPrice.toString(),'ether');
-          const itemPriceEther = web3.utils.fromWei(item.price.toString(),'ether')
+          const totalPriceEther = web3.utils.fromWei(totalPrice.toString(), 'ether');
+          const itemPriceEther = web3.utils.fromWei(item.price.toString(), 'ether')
           let itemList = {
             totalPriceEther,
             price: itemPriceEther,
@@ -35,14 +40,45 @@ const PurchasedItems = ({ mpContract, nftContract, web3, accounts }) => {
           }
           purchasedItems.push(itemList);
         }
-        console.log("Purchased items: ", purchasedItems);
+      }
+      console.log("Purchased items: ", purchasedItems);
         setPurchasedItems(purchasedItems);
         setLoading(false);
-        
-      }
     }
     catch (err) {
-      console.log("Error",err);
+      console.log("Error", err);
+    }
+  }
+
+  const reListNft = async (item, price) => {
+    try{
+      const listingPrice = web3.utils.toWei(price.toString(), 'ether');
+      const tx = await mpContract.methods.reList(item.itemId, listingPrice).send({
+        from: accounts[0],
+      });
+      console.log(tx)
+      
+        toast({
+          title: 'NFT Listed',
+          description: 'Your NFT has been re-listed successfully!',
+          status: 'success',
+          duration: 4000,
+          isClosable: true,
+        });
+        loadPurchasedItems()
+      }
+    catch(err){
+      console.log(err);
+      toast({
+        title: 'Error',
+        description: 'An error occurred re-listing your NFT.',
+        status: 'error',
+        duration: 5000, 
+        isClosable: true,
+    });
+    }
+    finally{
+      router.push('/my-listed-items');
     }
   }
 
@@ -60,19 +96,19 @@ const PurchasedItems = ({ mpContract, nftContract, web3, accounts }) => {
   return (
     <div className="mt-5 mb-10">
       <h1 className="text-3xl font-bold font-serif mb-5 text-center">Purchased NFTs</h1>
-        <div className="px-5 grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 justify-center">
-          {purchasedItems.length > 0 ? (
-            purchasedItems.map((item, idx) => (
-              <div key={idx}>
-                <ListCardUI item={item} isPurchased={true} />
-              </div>
-            ))
-          ) : (
-            <main style={{ padding: "1rem 0" }}>
+      <div className="px-5 grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 justify-center">
+        {purchasedItems.length > 0 ? (
+          purchasedItems.map((item, idx) => (
+            <div key={idx}>
+              <ListCardUI item={item} isPurchased={true} reListNft={reListNft} />
+            </div>
+          ))
+        ) : (
+          <main style={{ padding: "1rem 0" }}>
             <h1 className="text-3xl font-bold font-serif mb-4 text-center">No Purchased NFTs</h1>
-            </main>
-          )}
-        </div>
+          </main>
+        )}
+      </div>
     </div>
 
   )

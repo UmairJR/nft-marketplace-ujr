@@ -38,12 +38,11 @@ const ListedItems = ({ mpContract, nftContract, web3, accounts }) => {
           }
           listedItems.push(itemList);
 
-        }
-        console.log("Listed items: ", listedItems);
+        } 
+      }
+      console.log("Listed items: ", listedItems);
         setListedItems(listedItems);
         setLoading(false);
-
-      }
     }
     catch (err) {
       console.log("Error", err);
@@ -68,7 +67,7 @@ const ListedItems = ({ mpContract, nftContract, web3, accounts }) => {
           {listedItems.length > 0 ? (
             listedItems.map((item, idx) => (
               <div key={idx}>
-                <ListCardUI item={item} isNew={idx === listedItems.length-1} />
+                <ListCardUI item={item} isListed={true} isNew={idx === listedItems.length-1} />
               </div>
             )).reverse()
           ) : (

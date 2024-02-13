@@ -36,18 +36,14 @@ const SoldItems = ({ mpContract, nftContract, web3, accounts }) => {
             image: metadata.image,
             buyerAddress: item.buyer
           }
-
           if (item.sold) {
             soldItems.push(itemList);
           }
         }
-
-        console.log("Sold items: ", soldItems);
-
-        setSoldItems(soldItems);
-        setLoading(false);
-
       }
+      console.log("Sold items: ", soldItems);
+      setSoldItems(soldItems);
+      setLoading(false);
     }
     catch (err) {
       console.log("Error", err);

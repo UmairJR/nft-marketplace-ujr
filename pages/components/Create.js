@@ -6,12 +6,14 @@ import FormUI from './ui/Form';
 import { useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router';
 
-const Create = ({ mpContract, nftContract, web3, accounts }) => {
+const Create = ({ mpContract, nftContract, web3, accounts, nft_contract_address, mp_contract_address }) => {
     const toast = useToast();
     const router = useRouter();
     const fileInputRef = useRef(null);
-    const marketplace_contract_address = "0xF00B9f871b0306Ca5de7Fb5f2c6abcA9bb8AD3a2";
-    const nft_contract_address = "0x857B76c752671d549604682bFBc08691A2517279"
+    // const marketplace_contract_address = "0x39e59eb441B299d296910aeFa8D5efCDF15e1637";
+    // const nft_contract_address = "0xBa4411D0BE9B7bfDc29076B7169757FAb70e0359"
+    console.log("Nft Contract Address: ",nft_contract_address);
+    console.log("Marketplace Contract Address: ",mp_contract_address);
     const [image, setImage] = useState('');
     const [price, setPrice] = useState(null);
     const [name, setName] = useState('');
@@ -102,10 +104,17 @@ const Create = ({ mpContract, nftContract, web3, accounts }) => {
             const id = await nftContract.methods.tokenCount().call();
 
             // approve marketplace to spend nft
-            await (await nftContract.methods.setApprovalForAll(marketplace_contract_address, true)).send({
+            await (await nftContract.methods.setApprovalForAll(mp_contract_address, true)).send({
                 from: accounts[0],
             });
             console.log("Approved!!!!");
+            toast({
+                title: 'Approved',
+                description: 'Approval given to Marketplace!',
+                status: 'success',
+                duration: 4000,
+                isClosable: true,
+              });
 
             // add nft to marketplace
             const listingPrice = web3.utils.toWei(price.toString(), 'ether');
@@ -120,7 +129,7 @@ const Create = ({ mpContract, nftContract, web3, accounts }) => {
                 title: 'NFT Listed',
                 description: 'Your NFT has been listed successfully!',
                 status: 'success',
-                duration: 5000,
+                duration: 4000,
                 isClosable: true,
             });
 
